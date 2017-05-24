@@ -1,4 +1,4 @@
-__mipsConverter__
+## mipsConverter  
 This is a helper script which converts MIPS assembly code into its binary equivalent, including optional Verilog support. This was originally created for ECE 369 at the University of Arizona  
 
 To check usage, simply invoke  
