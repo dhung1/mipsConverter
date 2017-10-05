@@ -1,0 +1,10 @@
+# Compiled python
+*.pyc
+
+# Vim autosave
+*.swp
+
+# Anticipated input/output file formats
+*.s
+*.v
+*.dat
