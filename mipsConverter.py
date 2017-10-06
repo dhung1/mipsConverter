@@ -94,8 +94,8 @@ class Parser():
 			# Do some error checking
 			if (op not in self.instructions
 					or len(instruction) != (len(self.instructions[op].inTemplate) + 1)):
-				print('WARNING: Invalid instruction %s detected, skipping' % op)
-				return ""
+				print('WARNING: Invalid instruction %s detected, setting to nop' % op)
+				return "0" * 32
 
 			# Extract instruction information
 			instr = self.instructions[op]
@@ -221,7 +221,7 @@ class Parser():
 			instructionCounter = 1
 			for instruction in self.instrOut:
 				# Sanity checks
-				if len(instruction[0]) != 32:
+				if (len(instruction[0]) != 32):
 					# Incorrect length
 					print('WARNING: Length sanity check failed.'
 							' Instruction length %d != 32' % len(instruction[0]))
