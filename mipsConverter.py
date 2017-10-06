@@ -37,7 +37,7 @@ class Parser():
 	# Returns True if s is convertible to integer
 	def isInteger(self, s):
 		try:
-			int(s)
+			int(s, 0)
 			return True
 		except ValueError:
 			return False
@@ -127,16 +127,16 @@ class Parser():
 						value = tokens[token]
 						# shift fields
 						if (token == 'shift'):
-							outInstruction += self.signedBinary(int(value), 5)
+							outInstruction += self.signedBinary(int(value, 0), 5)
 						# imm16 fields (I type instructions)
 						elif (self.isInteger(value)):
-							outInstruction += self.signedBinary(int(value), 16)
-						# index fields (jumps)
+							outInstruction += self.signedBinary(int(value, 0), 16)
+						# index fields (jumps), where value is the label
 						elif (token == 'index'):
 							self.jumpQueue.append((self.pc/4, value))
 						# offset fields (branches). Note that offsets may be handled as imm16s above 
 						elif (token == 'offset'):
-							self.branchQueue.append((self.pc/4, value)) # Push (instrNum, label) to queue
+							self.branchQueue.append((self.pc/4, value))
 			return outInstruction
 
 	# Parse a tokenized line into a binary string
