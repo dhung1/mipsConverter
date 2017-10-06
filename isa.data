@@ -1,0 +1,136 @@
+# This is the ISA data file for mipsHelper369.
+
+# REGISTERS
+$0	-	00000
+$zero	-	00000
+$1	-	00001
+$at	-	00001
+$2	-	00010
+$v0	-	00010
+$3	-	00011
+$v1	-	00011
+$4	-	00100
+$a0	-	00100
+$5	-	00101
+$a1	-	00101
+$6	-	00110
+$a2	-	00110
+$7	-	00111
+$a3	-	00111
+$8	-	01000
+$t0	-	01000
+$9	-	01001
+$t1	-	01001
+$10	-	01010
+$t2	-	01010
+$11	-	01011
+$t3	-	01011
+$12	-	01100
+$t4	-	01100
+$13	-	01101
+$t5	-	01101
+$14	-	01110
+$t6	-	01110
+$15	-	01111
+$t7	-	01111
+$16	-	10000
+$s0	-	10000
+$17	-	10001
+$s1	-	10001
+$18	-	10010
+$s2	-	10010
+$19	-	10011
+$s3	-	10011
+$20	-	10100
+$s4	-	10100
+$21	-	10101
+$s5	-	10101
+$22	-	10110
+$s6	-	10110
+$23	-	10111
+$s7	-	10111
+$24	-	11000
+$t8	-	11000
+$25	-	11001
+$t9	-	11001
+$26	-	11010
+$k0	-	11010
+$27	-	11011
+$k1	-	11011
+$28	-	11100
+$gp	-	11100
+$29	-	11101
+$sp	-	11101
+$30	-	11110
+$fp	-	11110
+$31	-	11111
+$ra	-	11111
+
+# SPECIAL FIELDS
+zero	-	00000
+one	-	00001
+seb	-	10000
+seh	-	11000
+
+# INSTRUCTION SET
+add	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100000
+addi	-	rt rs immd		-	opcode rs rt immd			-	001000
+addiu	-	rt rs immd		-	opcode rs rt immd			-	001001
+addu	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100001
+and	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100100
+andi	-	rt rs immd		-	opcode rs rt immd			-	001100
+beq	-	rs rt offset		-	opcode rs rt offset			-	000100
+bgez	-	rs offset		-	opcode rs one offset			-	000001
+bgtz	-	rs offset		-	opcode rs zero offset			-	000111
+bltz	-	rs offset		-	opcode rs zero offset			-	000001
+blez	-	rs offset		-	opcode rs zero offset			-	000110
+
+bne	-	rs rt offset		-	opcode rs rt offset			-	000101
+clo	-	rd rs			-	opcode rs rt rd zero function		-	011100	-	100001
+clz	-	rd rs			-	opcode rs rt rd zero function		-	011100	-	100000
+j	-	index			-	opcode index				-	000010
+jal	-	index			-	opcode index				-	000011
+jr	-	rs			-	opcode rs zero zero zero function	-	000000	-	001000
+lb	-	rt offset base		-	opcode base rt offset			-	100000
+lbu	-	rt offset base		-	opcode base rt offset			-	100100
+lh	-	rt offset base		-	opcode base rt offset			-	100001
+lhu	-	rt offset base		-	opcode base rt offset			-	100101
+lui	-	rt immd			-	opcode zero rt immd			-	001111
+lw	-	rt offset base		-	opcode base rt offset			-	100011
+movz	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	001010
+movn	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	001011
+mul	-	rd rs rt		-	opcode rs rt rd zero function		-	011100	-	000010
+mult	-	rs rt			-	opcode rs rt zero zero function		-	000000	-	011000
+multu	-	rs rt			-	opcode rs rt zero zero function		-	000000	-	011001
+madd	-	rs rt			-	opcode rs rt zero zero function		-	011100	-	000000
+msub	-	rs rt			-	opcode rs rt zero zero function		-	011100	-	000100
+mfhi	-	rd			-	opcode zero zero rd zero function	-	000000	-	010000
+mflo	-	rd			-	opcode zero zero rd zero function	-	000000	-	010010
+mthi	-	rs			-	opcode rs zero zero zero function	-	000000	-	010001
+mtlo	-	rs			-	opcode rs zero zero zero function	-	000000	-	010011
+
+nop	-				-	opcode zero zero zero zero function	-	000000	-	000000
+nor	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100111
+or	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100101
+ori	-	rt rs immd		-	opcode rs rt immd			-	001101
+rotr	-	rd rt shift		-	opcode one rt rd shift function		-	000000	-	000010
+rotrv	-	rd rt rs		-	opcode rs rt rd one function		-	000000	-	000110
+sb	-	rt offset base		-	opcode base rt offset			-	101000
+seb	-	rd rt			-	opcode zero rt rd seb function		-	011111	-	100000
+seh	-	rd rt			-	opcode zero rt rd seh function		-	011111	-	100000
+sh	-	rt offset base		-	opcode base rt offset			-	101001
+sll	-	rd rt shift		-	opcode zero rt rd shift function	-	000000	-	000000
+sllv	-	rd rt rs		-	opcode rs rt rd zero function		-	000000	-	000100
+slt	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	101010
+slti	-	rt rs immd		-	opcode rs rt immd			-	001010
+sltiu	-	rt rs immd		-	opcode rs rt immd			-	001011
+sltu	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	101011
+sra	-	rd rt shift		-	opcode zero rt rd shift function	-	000000	-	000011
+srav	-	rd rt rs		-	opcode rs rt rd zero function		-	000000	-	000111
+srl	-	rd rt shift		-	opcode zero rt rd shift function	-	000000	-	000010
+srlv	-	rd rt rs		-	opcode rs rt rd zero function		-	000000	-	000110
+sub	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100010
+subu	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100011
+sw	-	rt offset base		-	opcode base rt offset			-	101011
+xor	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100110
+xori	-	rt rs immd		-	opcode rs rt immd			-	001110
