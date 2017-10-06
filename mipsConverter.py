@@ -194,7 +194,7 @@ class Parser():
 					continue
 				
 				if (mode == 'data'):
-					# TODO
+					# TODO - parse and output data
 					pass
 
 				elif (mode == 'instructions'):
@@ -235,12 +235,12 @@ class Parser():
 	# line[0] being the instruction and line[1] being the comment
 	# Returns formatted string
 	def formatLineOut(self, line, comment="", lineNumber=None,
-					binaryOutput=False, assembler=True, enableComments=True):
+					hexOut=True, assembler=True, enableComments=True):
 		# Convert formatting to hex
-		if binaryOutput:
-			instruction = line
-		else:
+		if hexOut:
 			instruction = "{0:0{1}x}".format(int(line,2),8)
+		else:
+			instruction = line
 			
 		# Prepend // to comment to actually make it a comment
 		if (enableComments and len(comment) > 0):
@@ -252,25 +252,25 @@ class Parser():
 		if assembler:
 			assert(lineNumber is not None)
 			output = ('memory[%d] = 32\'%s%s;\t%s'
-						% (lineNumber, ('b' if binaryOutput else 'h'),
+						% (lineNumber, ('h' if hexOut else 'b'),
 							instruction, comment))
 		else:
 			output = '%s\t%s' % (instruction, comment)
 		return output
 			
 	# Print output to console
-	def printOutput(self, binaryOutput=False, instructionMemory=False,
+	def printOutput(self, binaryOut=False, instructionMemory=False,
 					dataMemory=False, assembler=False, comments=False):
-		print("\n================================================"
+		print("\n========================================================="
 			  "\nResult:"
-			  "\n================================================")
+			  "\n=========================================================")
 		# Write instruction output
 		if instructionMemory:
 			lineCounter = 0;
 			for line in self.instrOut:
 				# Format output
 				output = self.formatLineOut(line=line[0], comment=line[1],
-								lineNumber=lineCounter, binaryOutput=binaryOutput,
+								lineNumber=lineCounter, hexOut=(not binaryOut),
 								assembler=assembler, enableComments=comments)
 				
 				# Print output
@@ -279,14 +279,23 @@ class Parser():
 				# Increment counter
 				lineCounter = lineCounter + 1
 			
-		# TODO: Write data output
+		# Write data output
 		if dataMemory:
 			lineCounter = 0 ;
 			for line in self.dataOut:
-				pass
+				# Format output
+				output = self.formatLineOut(line=line[0], comment=line[1],
+								lineNumber=lineCounter, hexOut=(not binaryOut),
+								assembler=assembler, enableComments=comments)
+
+				# Print output
+				print(output)
+					
+				# Increment counter
+				lineCounter = lineCounter + 1
 	
 	# Write output to file
-	def writeOutput(self, outputFile, binaryOutput=False, comments=False,
+	def writeOutput(self, outputFile, binaryOut=False, comments=False,
 					instructionMemory=False, dataMemory=False, assembler=False):
 		# Check to make sure we have instructions to write
 		if (instructionMemory and len(self.instrOut) > 0):
@@ -299,7 +308,7 @@ class Parser():
 				for line in self.instrOut:
 					# Format output
 					output = self.formatLineOut(line=line[0], comment=line[1],
-								lineNumber=lineCounter, binaryOutput=binaryOutput,
+								lineNumber=lineCounter, hexOut=(not binaryOut),
 								assembler=assembler, enableComments=comments)
 					
 					# Write output
@@ -313,12 +322,20 @@ class Parser():
 	
 		# Make sure we have data to write
 		if (dataMemory and len(self.dataOut) > 0):
-			# TODO: Write data output
+			# Write data output
 			with open(dataFilename, 'w') as f:
-				# TODO: Write data output
 				lineCounter = 0 ;
 				for line in self.dataOut:
-					pass
+					# Format output
+					output = self.formatLineOut(line=line[0], comment=line[1],
+								lineNumber=lineCounter, hexOut=(not binaryOut),
+								assembler=assembler, enableComments=comments)
+					
+					# Write output
+					f.write(output + '\n')
+						
+					# Increment counter
+					lineCounter = lineCounter + 1
 		
 def main():
 	argparser = argparse.ArgumentParser(description="Translate MIPS assembly into binary")
@@ -335,11 +352,11 @@ def main():
 	if args.input_file is not None:
 		parser.parseFile(inputFile=args.input_file)
 		if args.output_file is not None:
-			parser.writeOutput(outputFile=args.output_file, binaryOutput=args.b,
+			parser.writeOutput(outputFile=args.output_file, binaryOut=args.b,
 							instructionMemory=args.v, dataMemory=args.d,
 							assembler=args.a, comments=args.x)
 		else:
-			parser.printOutput(binaryOutput=args.b,
+			parser.printOutput(binaryOut=args.b,
 							instructionMemory=args.v, dataMemory=args.d,
 							assembler=args.a, comments=args.x)
 	else:
