@@ -235,7 +235,7 @@ class Parser():
 	# line[0] being the instruction and line[1] being the comment
 	# Returns formatted string
 	def formatLineOut(self, line, comment="", lineNumber=None,
-					binaryOutput=False, assembler=True):
+					binaryOutput=False, assembler=True, enableComments=True):
 		# Convert formatting to hex
 		if binaryOutput:
 			instruction = line
@@ -243,8 +243,10 @@ class Parser():
 			instruction = "{0:0{1}x}".format(int(line,2),8)
 			
 		# Prepend // to comment to actually make it a comment
-		if len(comment) > 0:
+		if (enableComments and len(comment) > 0):
 			comment = '// ' + comment 
+		else:
+			comment = ""
 			
 		# Format output
 		if assembler:
@@ -258,34 +260,36 @@ class Parser():
 			
 	# Print output to console
 	def printOutput(self, binaryOutput=False, instructionMemory=False,
-					dataMemory=False, assembler=False):
+					dataMemory=False, assembler=False, comments=False):
 		print("\n================================================"
 			  "\nResult:"
 			  "\n================================================")
-		lineCounter = 0;
 		# Write instruction output
-		for line in self.instrOut:
-			# Format output
-			output = self.formatLineOut(line=line[0], comment=line[1],
-							lineNumber=lineCounter, binaryOutput=binaryOutput,
-							assembler=assembler)
-			
-			# Print output
-			print(output)
+		if instructionMemory:
+			lineCounter = 0;
+			for line in self.instrOut:
+				# Format output
+				output = self.formatLineOut(line=line[0], comment=line[1],
+								lineNumber=lineCounter, binaryOutput=binaryOutput,
+								assembler=assembler, enableComments=comments)
 				
-			# Increment counter
-			lineCounter = lineCounter + 1
+				# Print output
+				print(output)
+					
+				# Increment counter
+				lineCounter = lineCounter + 1
 			
 		# TODO: Write data output
-		lineCounter = 0 ;
-		for line in self.dataOut:
-			pass
+		if dataMemory:
+			lineCounter = 0 ;
+			for line in self.dataOut:
+				pass
 	
 	# Write output to file
-	def writeOutput(self, outputFile, binaryOutput=False,
+	def writeOutput(self, outputFile, binaryOutput=False, comments=False,
 					instructionMemory=False, dataMemory=False, assembler=False):
 		# Check to make sure we have instructions to write
-		if (len(self.instrOut) > 0):
+		if (instructionMemory and len(self.instrOut) > 0):
 			# If we are writing an instruction file, add _data to our data filename
 			filenameSplit = outputFile.rsplit('.',1)
 			dataFilename = filenameSplit[0] + '_data.' + filenameSplit[1]
@@ -296,7 +300,7 @@ class Parser():
 					# Format output
 					output = self.formatLineOut(line=line[0], comment=line[1],
 								lineNumber=lineCounter, binaryOutput=binaryOutput,
-								assembler=assembler)
+								assembler=assembler, enableComments=comments)
 					
 					# Write output
 					f.write(output + '\n')
@@ -308,7 +312,7 @@ class Parser():
 			dataFilename = outputFile
 	
 		# Make sure we have data to write
-		if (len(self.dataOut) > 0):
+		if (dataMemory and len(self.dataOut) > 0):
 			# TODO: Write data output
 			with open(dataFilename, 'w') as f:
 				# TODO: Write data output
@@ -333,11 +337,11 @@ def main():
 		if args.output_file is not None:
 			parser.writeOutput(outputFile=args.output_file, binaryOutput=args.b,
 							instructionMemory=args.v, dataMemory=args.d,
-							assembler=args.a)
+							assembler=args.a, comments=args.x)
 		else:
 			parser.printOutput(binaryOutput=args.b,
 							instructionMemory=args.v, dataMemory=args.d,
-							assembler=args.a)
+							assembler=args.a, comments=args.x)
 	else:
 		print('No input file specified. Use python mipsConverter.py -h for help. Exiting.')
 		
