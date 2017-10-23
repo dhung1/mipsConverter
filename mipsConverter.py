@@ -3,8 +3,6 @@
 import argparse
 import re
 
-from isa import instructions, opcodes, regs
-
 # Struct to hold instruction information
 class Instruction():
 	''' Constructor
