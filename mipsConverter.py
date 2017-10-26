@@ -29,6 +29,8 @@ class Parser():
 		self.branchQueue = []
 		self.registers = {}
 		self.instructions = {}
+		self.dataTypes = {}
+		self.memAddress = 0
 		# Read default ISA file
 		self.readISA()
 		
@@ -53,7 +55,7 @@ class Parser():
 			string = string[:index]
 		return string.strip()
 	
-	# Break a line into individual words, trimming whitespace and removing comments
+	# Break a line into individual words, trimming whitespace
 	# Return tokenized line as list of strings
 	def tokenizeLine(self, line):
 		# Regex breakdown: comma followed by spaces OR comma OR parentheses OR spaces
@@ -83,6 +85,13 @@ class Parser():
 						function = ""
 					self.instructions[splitLine[0].strip()] = Instruction(inSyntax, outSyntax,
 																opcode, function)
+
+				# Data types
+				elif (len(splitLine) == 3):
+					self.dataTypes[splitLine[0].strip()] = int(splitLine[1])
+			# Default set words to 4 bytes
+			if ('word' not in self.dataTypes.keys()):
+				self.dataTypes['word'] = 4
 
 	# Parse an instruction (as a split line)
 	# Return instruction in binary as string
@@ -136,6 +145,21 @@ class Parser():
 						elif (token == 'offset'):
 							self.branchQueue.append((self.pc/4, value))
 			return outInstruction
+	
+	# Parse a tokenized line into a binary string
+	def processDataLine(self, splitLine):
+		# TODO - parse and output data
+		dataType = splitLine[0].strip('.')
+		dataSize = self.dataTypes[dataType]
+		for data in splitLine[1:]:
+			# WARNING: string and character literals not supported
+			if (self.isInteger(data)):
+				dataAsBin = self.signedBinary(int(data, 0), dataSize * 8)
+				if (self.memAddress % self.dataTypes['word'] == 0):
+					self.dataOut.append(dataAsBin)
+				else:
+					self.dataOut[-1] += dataAsBin
+				self.memAddress += dataSize
 
 	# Parse a tokenized line into a binary string
 	# Note that this wraps around parseInstruction and adds PC handling etc
@@ -188,12 +212,12 @@ class Parser():
 						mode = 'data'
 					elif (split[0] == '.text'):
 						mode = 'instructions'
-					# Don't continue parsing a tag
-					continue
+					# Don't continue parsing a non-data tag
+					if (split[0].strip('.') not in self.dataTypes.keys()):
+						continue
 				
 				if (mode == 'data'):
-					# TODO - parse and output data
-					pass
+					self.processDataLine(split)
 
 				elif (mode == 'instructions'):
 					# Line containing just a label
@@ -233,7 +257,7 @@ class Parser():
 	# line[0] being the instruction and line[1] being the comment
 	# Returns formatted string
 	def formatLineOut(self, line, comment="", lineNumber=None,
-					hexOut=True, assembler=True, enableComments=True):
+					hexOut=True, assembler=True, enableComments=False):
 		# Convert formatting to hex
 		if hexOut:
 			instruction = "{0:0{1}x}".format(int(line,2),8)
@@ -260,11 +284,12 @@ class Parser():
 	def printOutput(self, binaryOut=False, instructionMemory=False,
 					dataMemory=False, assembler=False, comments=False):
 		print("\n========================================================="
-			  "\nResult:"
+			  "\nResults:"
 			  "\n=========================================================")
 		# Write instruction output
 		if instructionMemory:
 			lineCounter = 0;
+			print('Instruction memory:')
 			for line in self.instrOut:
 				# Format output
 				output = self.formatLineOut(line=line[0], comment=line[1],
@@ -276,15 +301,19 @@ class Parser():
 					
 				# Increment counter
 				lineCounter = lineCounter + 1
+
+		if instructionMemory and dataMemory:
+			print('')
 			
 		# Write data output
 		if dataMemory:
 			lineCounter = 0 ;
+			print('Data memory:')
 			for line in self.dataOut:
 				# Format output
-				output = self.formatLineOut(line=line[0], comment=line[1],
+				output = self.formatLineOut(line=line,
 								lineNumber=lineCounter, hexOut=(not binaryOut),
-								assembler=assembler, enableComments=comments)
+								assembler=assembler)
 
 				# Print output
 				print(output)
@@ -325,9 +354,9 @@ class Parser():
 				lineCounter = 0 ;
 				for line in self.dataOut:
 					# Format output
-					output = self.formatLineOut(line=line[0], comment=line[1],
+					output = self.formatLineOut(line=line,
 								lineNumber=lineCounter, hexOut=(not binaryOut),
-								assembler=assembler, enableComments=comments)
+								assembler=assembler)
 					
 					# Write output
 					f.write(output + '\n')

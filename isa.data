@@ -1,6 +1,6 @@
 # This is the ISA data file for mipsHelper369.
 
-# REGISTERS
+# REGISTERS (name - bitfield)
 $0	-	00000
 $zero	-	00000
 $1	-	00001
@@ -66,13 +66,20 @@ $fp	-	11110
 $31	-	11111
 $ra	-	11111
 
-# SPECIAL FIELDS
+# SPECIAL FIELDS (name - bitfield)
 zero	-	00000
 one	-	00001
 seb	-	10000
 seh	-	11000
 
-# INSTRUCTION SET
+# DATA TYPES (name - byte length - mem (literally put 'mem'))
+byte	-	1	-	mem
+halfword	-	2	-	mem
+word	-	4	-	mem
+character	-	1	-	mem
+integer	-	4	-	mem
+
+# INSTRUCTION SET (instruction - args - bitcode format - instruction - opcode)
 add	-	rd rs rt		-	opcode rs rt rd zero function		-	000000	-	100000
 addi	-	rt rs immd		-	opcode rs rt immd			-	001000
 addiu	-	rt rs immd		-	opcode rs rt immd			-	001001
