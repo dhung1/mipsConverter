@@ -44,7 +44,7 @@ class Parser():
 
 	# Returns signed binary version of n with bits digits, as string
 	def signedBinary(self, n, bits):
-		s = bin(n & int('1'*bits, 2))[2:]
+		s = bin(int(n) & int('1'*bits, 2))[2:]
 		return ("{0:0>%s}" % (bits)).format(s)
 
 	# Helper function that removes comments (marked by #) from a line
@@ -60,7 +60,7 @@ class Parser():
 	def tokenizeLine(self, line):
 		# Regex breakdown: comma followed by spaces OR comma OR parentheses OR spaces
 		split = re.split(',\s+|,|\s*\(|\)\s*|\s+', line)
-		split = filter(None, split) # Remove empty strings
+		split = list(filter(None, split)) # Remove empty strings
 		return split
 
 	# Reads a ISA reference for parsing templates
@@ -140,15 +140,17 @@ class Parser():
 							outInstruction += self.signedBinary(int(value, 0), 16)
 						# index fields (jumps), where value is the label
 						elif (token == 'index'):
-							self.jumpQueue.append((self.pc/4, value))
+							self.jumpQueue.append((int(self.pc/4), value))
 						# offset fields (branches). Note that offsets may be handled as imm16s above 
 						elif (token == 'offset'):
-							self.branchQueue.append((self.pc/4, value))
+							self.branchQueue.append((int(self.pc/4), value))
 			return outInstruction
 	
 	# Parse a tokenized line into a binary string
 	def processDataLine(self, splitLine):
-		# TODO - parse and output data
+		# Remove label
+		if (splitLine[0][-1] == ':'):
+			splitLine = splitLine[1:]
 		dataType = splitLine[0].strip('.')
 		dataSize = self.dataTypes[dataType]
 		for data in splitLine[1:]:
